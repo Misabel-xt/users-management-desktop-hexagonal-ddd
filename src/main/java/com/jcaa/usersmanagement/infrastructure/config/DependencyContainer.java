@@ -15,6 +15,7 @@ import com.jcaa.usersmanagement.application.service.GetUserByIdService;
 import com.jcaa.usersmanagement.application.service.LoginService;
 import com.jcaa.usersmanagement.application.service.UpdateUserService;
 import com.jcaa.usersmanagement.application.service.dto.command.CreateClienteService;
+import com.jcaa.usersmanagement.application.service.dto.command.DeleteClienteService;
 import com.jcaa.usersmanagement.application.service.dto.command.UpdateClienteService;
 import com.jcaa.usersmanagement.application.service.dto.query.FindClienteByIdService;
 import com.jcaa.usersmanagement.infrastructure.adapter.email.JavaMailEmailSenderAdapter;
@@ -86,9 +87,10 @@ public final class DependencyContainer {
     CreateClienteService createClienteService = new CreateClienteService(clienteRepository);
     FindClienteByIdService findClienteByIdService = new FindClienteByIdService(clienteRepository);
     UpdateClienteService updateClienteService = new UpdateClienteService(clienteRepository);
+    DeleteClienteService deleteClienteService = new DeleteClienteService(clienteRepository);
 
     // Instanciar el controlador inyectándole el servicio
-    this.clienteController = new ClienteController(createClienteService, findClienteByIdService, updateClienteService);
+    this.clienteController = new ClienteController(createClienteService, findClienteByIdService, updateClienteService, deleteClienteService);
   }
 
   public UserController userController() {

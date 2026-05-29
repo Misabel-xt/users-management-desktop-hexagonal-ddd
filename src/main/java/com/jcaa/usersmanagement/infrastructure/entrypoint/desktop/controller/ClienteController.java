@@ -1,9 +1,6 @@
 package com.jcaa.usersmanagement.infrastructure.entrypoint.desktop.controller;
 
-import com.jcaa.usersmanagement.application.service.dto.command.CreateClienteService;
-import com.jcaa.usersmanagement.application.service.dto.command.CreateClienteCommand;
-import com.jcaa.usersmanagement.application.service.dto.command.UpdateClienteCommand;
-import com.jcaa.usersmanagement.application.service.dto.command.UpdateClienteService;
+import com.jcaa.usersmanagement.application.service.dto.command.*;
 import com.jcaa.usersmanagement.application.service.dto.query.FindClienteByIdQuery;
 import com.jcaa.usersmanagement.application.service.dto.query.FindClienteByIdService;
 import com.jcaa.usersmanagement.domain.model.ClienteModel;
@@ -16,11 +13,13 @@ public class ClienteController {
     private final CreateClienteService createClienteService;
     private final FindClienteByIdService findClienteByIdService;
     private final UpdateClienteService updateClienteService;
+    private final DeleteClienteService deleteClienteService;
 
-    public ClienteController(CreateClienteService createClienteService, FindClienteByIdService findClienteByIdService, UpdateClienteService updateClienteService) {
+    public ClienteController(CreateClienteService createClienteService, FindClienteByIdService findClienteByIdService, UpdateClienteService updateClienteService, DeleteClienteService deleteClienteService) {
         this.createClienteService = createClienteService;
         this.findClienteByIdService = findClienteByIdService;
         this.updateClienteService = updateClienteService;
+        this.deleteClienteService = deleteClienteService;
     }
 
     public void crearCliente(Scanner scanner) {
@@ -102,6 +101,26 @@ public class ClienteController {
             System.out.println("Cliente actualizado exitosamente.");
         } catch (Exception e) {
             System.out.println("Error al actualizar: " + e.getMessage());
+        }
+    }
+
+    public void eliminarCliente(Scanner scanner) {
+        System.out.println("\n--- ELIMINAR CLIENTE ---");
+        System.out.print("Ingrese el ID del cliente a eliminar: ");
+        String id = scanner.nextLine();
+
+        System.out.print("¿Está seguro que desea eliminar este cliente? (S/N): ");
+        String confirmacion = scanner.nextLine();
+
+        if (confirmacion.equalsIgnoreCase("S")) {
+            try {
+                deleteClienteService.execute(new DeleteClienteCommand(id));
+                System.out.println("Cliente eliminado exitosamente.");
+            } catch (Exception e) {
+                System.out.println("Error al eliminar: " + e.getMessage());
+            }
+        } else {
+            System.out.println("Operación cancelada.");
         }
     }
 
