@@ -33,6 +33,9 @@ public class ClienteRepositoryPostgreSQL implements ClienteRepositoryPort {
     private static final String SQL_DELETE =
             "DELETE FROM cliente WHERE numero_identificacion = ?";
 
+    private static final String SQL_UPDATE =
+            "UPDATE cliente SET nombre = ?, primer_apellido = ?, segundo_apellido = ?, correo_electronico = ? WHERE numero_identificacion = ?";
+
     private final Connection connection;
     private final ClienteEntityMapper mapper = new ClienteEntityMapper();
 
@@ -99,6 +102,24 @@ public class ClienteRepositoryPostgreSQL implements ClienteRepositoryPort {
             return clientes;
         } catch (SQLException exception) {
             throw new RuntimeException("Error al listar los clientes", exception);
+        }
+    }
+
+    @Override
+    public ClienteModel update(ClienteModel cliente) {
+        ClienteEntity entity = mapper.toEntity(cliente);
+        try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
+            statement.setString(1, entity.getNombre());
+            statement.setString(2, entity.getPrimer_apellido());
+            statement.setString(3, entity.getSegundo_apellido());
+            statement.setString(4, entity.getCorreo_electronico());
+            statement.setInt(5, Integer.parseInt(entity.getNumero_identificacion())); // El ID va al final para el WHERE
+            statement.executeUpdate();
+            return cliente;
+        } catch (SQLException exception) {
+            throw new RuntimeException("Error al actualizar el cliente en la base de datos", exception);
+        } catch (NumberFormatException exception) {
+            throw new RuntimeException("El número de identificación debe ser numérico", exception);
         }
     }
 
