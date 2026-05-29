@@ -5,6 +5,7 @@ import java.util.Optional;
 
 public enum ClienteMenuOption {
     CREATE_CLIENTE(1, "Crear Cliente"),
+    FIND_CLIENTE(2, "Buscar Cliente por ID"),
     EXIT(0, "Salir");
 
     private final int number;
