@@ -1,6 +1,7 @@
 package com.jcaa.usersmanagement.infrastructure.entrypoint.desktop.cli;
 
 import com.jcaa.usersmanagement.infrastructure.entrypoint.desktop.cli.handler.CreateClienteHandler;
+import com.jcaa.usersmanagement.infrastructure.entrypoint.desktop.cli.handler.FindClienteByIdHandler;
 import com.jcaa.usersmanagement.infrastructure.entrypoint.desktop.cli.handler.OperationHandler;
 import com.jcaa.usersmanagement.infrastructure.entrypoint.desktop.cli.io.ConsoleIO;
 import com.jcaa.usersmanagement.infrastructure.entrypoint.desktop.cli.menu.ClienteMenuOption;
@@ -62,7 +63,8 @@ public final class ClienteManagementCli {
 
     private Map<ClienteMenuOption, OperationHandler> buildHandlers() {
         return Map.of(
-                ClienteMenuOption.CREATE_CLIENTE, new CreateClienteHandler(clienteController, console)
+                ClienteMenuOption.CREATE_CLIENTE, new CreateClienteHandler(clienteController, console),
+                ClienteMenuOption.FIND_CLIENTE, new FindClienteByIdHandler(clienteController, console)
         );
     }
 
