@@ -6,6 +6,7 @@ import com.jcaa.usersmanagement.application.port.in.GetAllUsersUseCase;
 import com.jcaa.usersmanagement.application.port.in.GetUserByIdUseCase;
 import com.jcaa.usersmanagement.application.port.in.LoginUseCase;
 import com.jcaa.usersmanagement.application.port.in.UpdateUserUseCase;
+import com.jcaa.usersmanagement.application.port.out.ClienteRepositoryPort;
 import com.jcaa.usersmanagement.application.service.CreateUserService;
 import com.jcaa.usersmanagement.application.service.DeleteUserService;
 import com.jcaa.usersmanagement.application.service.EmailNotificationService;
@@ -13,11 +14,14 @@ import com.jcaa.usersmanagement.application.service.GetAllUsersService;
 import com.jcaa.usersmanagement.application.service.GetUserByIdService;
 import com.jcaa.usersmanagement.application.service.LoginService;
 import com.jcaa.usersmanagement.application.service.UpdateUserService;
+import com.jcaa.usersmanagement.application.service.dto.command.CreateClienteService;
 import com.jcaa.usersmanagement.infrastructure.adapter.email.JavaMailEmailSenderAdapter;
 import com.jcaa.usersmanagement.infrastructure.adapter.email.SmtpConfig;
 import com.jcaa.usersmanagement.infrastructure.adapter.persistence.config.DatabaseConfig;
 import com.jcaa.usersmanagement.infrastructure.adapter.persistence.config.DatabaseConnectionFactory;
+import com.jcaa.usersmanagement.infrastructure.adapter.persistence.repository.ClienteRepositoryPostgreSQL;
 import com.jcaa.usersmanagement.infrastructure.adapter.persistence.repository.UserRepositoryMySQL;
+import com.jcaa.usersmanagement.infrastructure.entrypoint.desktop.controller.ClienteController;
 import com.jcaa.usersmanagement.infrastructure.entrypoint.desktop.controller.UserController;
 
 import java.sql.Connection;
@@ -39,6 +43,7 @@ public final class DependencyContainer {
   private static final String SMTP_FROM_NAME = "smtp.from.name";
 
   private final UserController userController;
+  private final ClienteController clienteController;
 
   public DependencyContainer() {
     final AppProperties properties = new AppProperties();
@@ -71,10 +76,23 @@ public final class DependencyContainer {
             getUserByIdUseCase,
             getAllUsersUseCase,
             loginUseCase);
+
+    // Instanciar el repositorio pasándole la conexión a PostgreSQL que ya existe en esa class
+    ClienteRepositoryPort clienteRepository = new ClienteRepositoryPostgreSQL(connection);
+
+    // Instanciar el servicio inyectándole el repositorio
+    CreateClienteService createClienteService = new CreateClienteService(clienteRepository);
+
+    // Instanciar el controlador inyectándole el servicio
+    this.clienteController = new ClienteController(createClienteService);
   }
 
   public UserController userController() {
     return userController;
+  }
+
+  public ClienteController clienteController() {
+    return clienteController;
   }
 
   private static Connection buildDatabaseConnection(final AppProperties properties) {

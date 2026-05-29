@@ -40,7 +40,8 @@ public class ClienteRepositoryPostgreSQL implements ClienteRepositoryPort {
     public ClienteModel save(ClienteModel cliente) {
         ClienteEntity entity = mapper.toEntity(cliente);
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
-            statement.setString(1, entity.getNumero_identificacion());
+            // Conversión de String a Int para la base de datos
+            statement.setInt(1, Integer.parseInt(entity.getNumero_identificacion()));
             statement.setString(2, entity.getNombre());
             statement.setString(3, entity.getPrimer_apellido());
             statement.setString(4, entity.getSegundo_apellido());
@@ -49,19 +50,23 @@ public class ClienteRepositoryPostgreSQL implements ClienteRepositoryPort {
             return cliente;
         } catch (SQLException exception) {
             throw new RuntimeException("Error al guardar el cliente en la base de datos", exception);
+        } catch (NumberFormatException exception) {
+            throw new RuntimeException("El número de identificación debe ser numérico y no exceder la capacidad de un Integer", exception);
         }
     }
 
     @Override
     public Optional<ClienteModel> findById(String id) {
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
-            statement.setString(1, id);
+            // Conversión de String a Int para la base de datos
+            statement.setInt(1, Integer.parseInt(id));
             ResultSet resultSet = statement.executeQuery();
             if (!resultSet.next()) {
                 return Optional.empty();
             }
             ClienteEntity entity = ClienteEntity.builder()
-                    .numero_identificacion(resultSet.getString("numero_identificacion"))
+                    // Extracción como Int y conversión a String para la entidad
+                    .numero_identificacion(String.valueOf(resultSet.getInt("numero_identificacion")))
                     .nombre(resultSet.getString("nombre"))
                     .primer_apellido(resultSet.getString("primer_apellido"))
                     .segundo_apellido(resultSet.getString("segundo_apellido"))
@@ -70,6 +75,8 @@ public class ClienteRepositoryPostgreSQL implements ClienteRepositoryPort {
             return Optional.of(mapper.toModel(entity));
         } catch (SQLException exception) {
             throw new RuntimeException("Error al buscar el cliente", exception);
+        } catch (NumberFormatException exception) {
+            throw new RuntimeException("El formato del ID buscado no es válido para entero", exception);
         }
     }
 
@@ -80,7 +87,8 @@ public class ClienteRepositoryPostgreSQL implements ClienteRepositoryPort {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 ClienteEntity entity = ClienteEntity.builder()
-                        .numero_identificacion(resultSet.getString("numero_identificacion"))
+                        // Extracción como Int y conversión a String para la entidad
+                        .numero_identificacion(String.valueOf(resultSet.getInt("numero_identificacion")))
                         .nombre(resultSet.getString("nombre"))
                         .primer_apellido(resultSet.getString("primer_apellido"))
                         .segundo_apellido(resultSet.getString("segundo_apellido"))
@@ -97,10 +105,12 @@ public class ClienteRepositoryPostgreSQL implements ClienteRepositoryPort {
     @Override
     public void delete(String id) {
         try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
-            statement.setString(1, id);
+            statement.setInt(1, Integer.parseInt(id));
             statement.executeUpdate();
         } catch (SQLException exception) {
             throw new RuntimeException("Error al eliminar el cliente", exception);
+        } catch (NumberFormatException exception) {
+            throw new RuntimeException("El formato del ID a eliminar no es válido para entero", exception);
         }
     }
 }
