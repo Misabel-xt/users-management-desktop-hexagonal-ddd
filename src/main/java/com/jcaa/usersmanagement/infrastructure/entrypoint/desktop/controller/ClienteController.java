@@ -2,6 +2,8 @@ package com.jcaa.usersmanagement.infrastructure.entrypoint.desktop.controller;
 
 import com.jcaa.usersmanagement.application.service.dto.command.CreateClienteService;
 import com.jcaa.usersmanagement.application.service.dto.command.CreateClienteCommand;
+import com.jcaa.usersmanagement.application.service.dto.command.UpdateClienteCommand;
+import com.jcaa.usersmanagement.application.service.dto.command.UpdateClienteService;
 import com.jcaa.usersmanagement.application.service.dto.query.FindClienteByIdQuery;
 import com.jcaa.usersmanagement.application.service.dto.query.FindClienteByIdService;
 import com.jcaa.usersmanagement.domain.model.ClienteModel;
@@ -13,10 +15,12 @@ public class ClienteController {
 
     private final CreateClienteService createClienteService;
     private final FindClienteByIdService findClienteByIdService;
+    private final UpdateClienteService updateClienteService;
 
-    public ClienteController(CreateClienteService createClienteService, FindClienteByIdService findClienteByIdService) {
+    public ClienteController(CreateClienteService createClienteService, FindClienteByIdService findClienteByIdService, UpdateClienteService updateClienteService) {
         this.createClienteService = createClienteService;
         this.findClienteByIdService = findClienteByIdService;
+        this.updateClienteService = updateClienteService;
     }
 
     public void crearCliente(Scanner scanner) {
@@ -73,4 +77,32 @@ public class ClienteController {
             System.out.println("Error al buscar: " + e.getMessage());
         }
     }
+
+    public void actualizarCliente(Scanner scanner) {
+        System.out.println("\n--- ACTUALIZAR CLIENTE ---");
+        System.out.print("Ingrese el ID del cliente a actualizar: ");
+        String id = scanner.nextLine();
+
+        System.out.print("Nuevo Nombre: ");
+        String nombre = scanner.nextLine();
+
+        System.out.print("Nuevo Primer Apellido: ");
+        String apellido1 = scanner.nextLine();
+
+        System.out.print("Nuevo Segundo Apellido: ");
+        String apellido2 = scanner.nextLine();
+
+        System.out.print("Nuevo Correo Electrónico: ");
+        String correo = scanner.nextLine();
+
+        UpdateClienteCommand command = new UpdateClienteCommand(id, nombre, apellido1, apellido2, correo);
+
+        try {
+            updateClienteService.execute(command);
+            System.out.println("Cliente actualizado exitosamente.");
+        } catch (Exception e) {
+            System.out.println("Error al actualizar: " + e.getMessage());
+        }
+    }
+
 }
