@@ -8,6 +8,7 @@ public enum ClienteMenuOption {
     FIND_CLIENTE(2, "Buscar Cliente por ID"),
     UPDATE_CLIENTE(3, "Actualizar Cliente"),
     DELETE_CLIENTE(4, "Eliminar Cliente"),
+    LIST_CLIENTES(5, "Listar todos los Clientes"),
     EXIT(0, "Salir");
 
     private final int number;

@@ -64,7 +64,8 @@ public final class ClienteManagementCli {
                 ClienteMenuOption.CREATE_CLIENTE, new CreateClienteHandler(clienteController, console),
                 ClienteMenuOption.FIND_CLIENTE, new FindClienteByIdHandler(clienteController, console),
                 ClienteMenuOption.UPDATE_CLIENTE, new UpdateClienteHandler(clienteController, console),
-                ClienteMenuOption.DELETE_CLIENTE, new DeleteClienteHandler(clienteController, console)
+                ClienteMenuOption.DELETE_CLIENTE, new DeleteClienteHandler(clienteController, console),
+                ClienteMenuOption.LIST_CLIENTES, new ListClientesHandler(clienteController)
         );
     }
 

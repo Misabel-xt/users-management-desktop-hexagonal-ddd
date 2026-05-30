@@ -1,10 +1,13 @@
 package com.jcaa.usersmanagement.infrastructure.entrypoint.desktop.controller;
 
 import com.jcaa.usersmanagement.application.service.dto.command.*;
+import com.jcaa.usersmanagement.application.service.dto.query.FindAllClientesQuery;
+import com.jcaa.usersmanagement.application.service.dto.query.FindAllClientesService;
 import com.jcaa.usersmanagement.application.service.dto.query.FindClienteByIdQuery;
 import com.jcaa.usersmanagement.application.service.dto.query.FindClienteByIdService;
 import com.jcaa.usersmanagement.domain.model.ClienteModel;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -14,12 +17,14 @@ public class ClienteController {
     private final FindClienteByIdService findClienteByIdService;
     private final UpdateClienteService updateClienteService;
     private final DeleteClienteService deleteClienteService;
+    private final FindAllClientesService findAllClientesService;
 
-    public ClienteController(CreateClienteService createClienteService, FindClienteByIdService findClienteByIdService, UpdateClienteService updateClienteService, DeleteClienteService deleteClienteService) {
+    public ClienteController(CreateClienteService createClienteService, FindClienteByIdService findClienteByIdService, UpdateClienteService updateClienteService, DeleteClienteService deleteClienteService, FindAllClientesService findAllClientesService) {
         this.createClienteService = createClienteService;
         this.findClienteByIdService = findClienteByIdService;
         this.updateClienteService = updateClienteService;
         this.deleteClienteService = deleteClienteService;
+        this.findAllClientesService = findAllClientesService;
     }
 
     public void crearCliente(Scanner scanner) {
@@ -121,6 +126,25 @@ public class ClienteController {
             }
         } else {
             System.out.println("Operación cancelada.");
+        }
+    }
+
+    public void listarClientes() {
+        System.out.println("\n--- LISTA DE CLIENTES ---");
+        try {
+            List<ClienteModel> clientes = findAllClientesService.execute(new FindAllClientesQuery());
+
+            if (clientes.isEmpty()) {
+                System.out.println("No hay clientes registrados en la base de datos.");
+            } else {
+                for (ClienteModel c : clientes) {
+                    System.out.println("ID: " + c.getNumeroIdentificacion() +
+                            " | Nombre: " + c.getNombre() + " " + c.getPrimerApellido() +
+                            " | Correo: " + c.getCorreoElectronico().value());
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error al listar los clientes: " + e.getMessage());
         }
     }
 
